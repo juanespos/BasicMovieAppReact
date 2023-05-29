@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./App.css";
 import SearchIcon from "./search.svg";
@@ -8,22 +8,16 @@ import MovieCard from "./MovieCard";
 
 const API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=f9530aea";
 
-const movie1 = {
-  Title: "Spiderman and Grandma",
-  Year: "2009",
-  imdbID: "tt1433184",
-  Type: "movie",
-  Poster:
-    "https://m.media-amazon.com/images/M/MV5BMjE3Mzg0MjAxMl5BMl5BanBnXkFtZTcwNjIyODg5Mg@@._V1_SX300.jpg",
-};
-
 const App = () => {
+  const [movies, setMovies] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const searcMovies = async (title) => {
     const response = await fetch(`${API_URL}&s=${title}`);
 
     const data = await response.json();
 
-    console.log(data.Search);
+    setMovies(data.Search);
   };
 
   useEffect(() => {
@@ -41,9 +35,18 @@ const App = () => {
         />
         <img src={SearchIcon} alt="search" onClick={() => {}} />
       </div>
-      <div className="container">
-        <MovieCard movie1={movie1} />
-      </div>
+
+      {movies?.length > 0 ? (
+        <div className="container">
+          {movies.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty">
+          <h2>No movies found</h2>
+        </div>
+      )}
     </div>
   );
 };
